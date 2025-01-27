@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { alltopics, getarticles } = require("./model");
+const { alltopics, getArticles, getarticlesid } = require("./model");
 
 exports.getAllDocs = (req, res, next) => {
   const theFilePath = path.join(__dirname, "./endpoints.json");
@@ -12,7 +12,7 @@ exports.getAllDocs = (req, res, next) => {
     } else {
       const endpoints = JSON.parse(docsData);
 
-      res.status(200).json({ endpoints });
+      res.status(200).send({ endpoints });
     }
   });
 };
@@ -21,13 +21,16 @@ exports.gettopics = (req, res, next) => {
     res.status(200).send({ topics });
   });
 };
-
+exports.getNewArticles = (req, res, next) => {
+  const { sort_by, order } = req.query;
+  getArticles(sort_by, order).then((result) => {
+    res.status(200).send({ result });
+  });
+};
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  if (isNaN(article_id)) {
-    return res.status(400).send({ msg: "Bad Request!" });
-  }
-  getarticles(article_id)
+
+  getarticlesid(article_id)
     .then((article) => {
       res.status(200).send({ article });
     })

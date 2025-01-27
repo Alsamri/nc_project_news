@@ -3,6 +3,7 @@ const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const app = require("../app.js");
+require("jest-sorted");
 const {
   topicData,
   userData,
@@ -84,6 +85,34 @@ describe("GET /api/articles/:article_id", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad Request!");
+      });
+  });
+});
+
+describe("GET /api/articles/", () => {
+  it("GET: 200 an articles array of article objects ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.result).toBeInstanceOf(Array);
+        expect(response.body.result.length).toBeGreaterThan(1);
+        response.body.result.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              title: expect.any(String),
+              author: expect.any(String),
+              votes: expect.any(Number),
+              article_id: expect.any(Number),
+              article_img_url: expect.any(String),
+              created_at: expect.any(String),
+              topic: expect.any(String),
+              comment_count: expect.any(String),
+            })
+          );
+          expect(article).not.toHaveProperty("body");
+          expect(response.body.result).toBeSorted({ descending: true });
+        });
       });
   });
 });

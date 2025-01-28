@@ -111,8 +111,51 @@ describe("GET /api/articles/", () => {
             })
           );
           expect(article).not.toHaveProperty("body");
-          expect(response.body.result).toBeSorted({ descending: true });
+          expect(response.body.result).toBeSortedBy("created_at", {
+            descending: true,
+          });
         });
+      });
+  });
+});
+describe("GET /api/articles/:article_id/comments", () => {
+  test("GET: 200 Responds with an array of comments for the given article id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        expect(comment).toBeInstanceOf(Array);
+        expect(comment.length).toBeGreaterThan(0);
+        comment.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              article_id: expect.any(Number),
+            })
+          );
+        });
+
+        expect(comment).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET:404 sends an appropriate status and error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("GET:400 sends an appropriate status and error message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/articlenumbers")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request!");
       });
   });
 });

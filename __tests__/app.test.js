@@ -220,3 +220,58 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("PATCH /api/articles/:article_id", () => {
+  test("PATCH : 200 Updates the article's votes and send back the article", () => {
+    const newVote = { inc_votes: 5 };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVote)
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.article);
+
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            article_id: 1,
+            votes: expect.any(Number),
+            title: expect.any(String),
+            author: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+          })
+        );
+        expect(body.article.votes).toBe(105);
+      });
+  });
+  test("PATCH : 400 sends an appropriate status and error message when given an invalid id", () => {
+    const newVote = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/not_a_number")
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request!");
+      });
+  });
+  test("PATCH : 400 Responds with an error when inc votes is not a number ", () => {
+    const newVote = { inc_votes: "not_a_number" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request!");
+      });
+  });
+  test("PATCH : 404 Responds with an error when article ID does not exist ", () => {
+    const newVote = { inc_votes: 15 };
+    return request(app)
+      .patch("/api/articles/800")
+      .send(newVote)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+});

@@ -1,6 +1,12 @@
 const fs = require("fs");
 const path = require("path");
-const { alltopics, getArticles, getarticlesid } = require("./model");
+const {
+  alltopics,
+  getArticles,
+  getarticlesid,
+  fetchArticlesById,
+  gettingArticlesById,
+} = require("./model");
 
 exports.getAllDocs = (req, res, next) => {
   const theFilePath = path.join(__dirname, "./endpoints.json");
@@ -33,6 +39,15 @@ exports.getArticleById = (req, res, next) => {
   getarticlesid(article_id)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+exports.getcommentsById = (req, res, next) => {
+  const { article_id } = req.params;
+  gettingArticlesById(article_id)
+    .then((comment) => {
+      res.status(200).send({ comment });
     })
     .catch(next);
 };

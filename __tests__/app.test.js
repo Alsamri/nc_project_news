@@ -11,9 +11,7 @@ const {
   commentData,
 } = require("../db/data/test-data/index.js");
 const Test = require("supertest/lib/test.js");
-/* Set up your test imports here */
 
-/* Set up your beforeEach & afterAll functions here */
 beforeEach(() => {
   return seed({ topicData, userData, articleData, commentData });
 });
@@ -291,6 +289,24 @@ describe("DELETE /api/comments/:comment_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Comment does not exist");
+      });
+  });
+});
+describe.only("GET /api/users", () => {
+  test("GET: 200 responds with all users in an array", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(users).toBeInstanceOf(Array);
+        expect(users.length).toBeGreaterThan(0);
+        users.forEach((user) => {
+          expect.objectContaining({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
       });
   });
 });

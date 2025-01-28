@@ -4,11 +4,11 @@ const {
   alltopics,
   getArticles,
   getarticlesid,
-  fetchArticlesById,
   gettingArticlesById,
   addNewComment,
   updateVotesById,
   deleteCommentById,
+  allUsers,
 } = require("./model");
 
 exports.getAllDocs = (req, res, next) => {
@@ -87,6 +87,14 @@ exports.deleteByid = (req, res, next) => {
   deleteCommentById(comment_id)
     .then(() => {
       res.status(204).send();
+    })
+    .catch(next);
+};
+
+exports.getallusers = (req, res, next) => {
+  allUsers()
+    .then((users) => {
+      res.status(200).send({ users });
     })
     .catch(next);
 };

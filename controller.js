@@ -6,6 +6,7 @@ const {
   getarticlesid,
   fetchArticlesById,
   gettingArticlesById,
+  addNewComment,
 } = require("./model");
 
 exports.getAllDocs = (req, res, next) => {
@@ -27,7 +28,7 @@ exports.gettopics = (req, res, next) => {
     res.status(200).send({ topics });
   });
 };
-exports.getNewArticles = (req, res, next) => {
+exports.getAllArticles = (req, res, next) => {
   const { sort_by, order } = req.query;
   getArticles(sort_by, order).then((result) => {
     res.status(200).send({ result });
@@ -48,6 +49,22 @@ exports.getcommentsById = (req, res, next) => {
   gettingArticlesById(article_id)
     .then((comment) => {
       res.status(200).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.postnewcomment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+  if (isNaN(Number(article_id))) {
+    return res.status(400).send({ msg: "Bad Request!" });
+  }
+  if (!username || !body) {
+    return res.status(400).send({ msg: "Invalid insertion" });
+  }
+  addNewComment(article_id, username, body)
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch(next);
 };

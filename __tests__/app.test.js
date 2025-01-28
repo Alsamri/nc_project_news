@@ -229,8 +229,6 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(newVote)
       .expect(200)
       .then(({ body }) => {
-        console.log(body.article);
-
         expect(body.article).toEqual(
           expect.objectContaining({
             article_id: 1,
@@ -272,6 +270,27 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("article does not exist");
+      });
+  });
+});
+describe("DELETE /api/comments/:comment_id", () => {
+  test("DELETE: 204 deletes the comment with no response", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("DELETE: 400 responds with an error for invalid id ", () => {
+    return request(app)
+      .delete("/api/comments/not_a_number")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request!");
+      });
+  });
+  test("DELETE: 404 responds with an error if comment id does not exist", () => {
+    return request(app)
+      .delete("/api/comments/800")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comment does not exist");
       });
   });
 });

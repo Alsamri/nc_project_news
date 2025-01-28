@@ -8,6 +8,7 @@ const {
   getcommentsById,
   postnewcomment,
   patchVotes,
+  deleteByid,
 } = require("./controller");
 
 app.use(express.json());
@@ -20,6 +21,7 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getcommentsById);
 app.post("/api/articles/:article_id/comments", postnewcomment);
 app.patch("/api/articles/:article_id", patchVotes);
+app.delete("/api/comments/:comment_id", deleteByid);
 
 app.use((err, req, res, next) => {
   if (err.status) {

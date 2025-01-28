@@ -25,7 +25,6 @@ exports.getArticles = (sort_by = "created_at", order = "DESC") => {
        ORDER BY ${sort_by} ${order};`
     )
     .then((article) => {
-      console.log(article.rows);
       return article.rows;
     });
 };
@@ -61,5 +60,26 @@ exports.gettingArticlesById = (article_id) => {
         });
       }
       return result.rows;
+    });
+};
+
+exports.addNewComment = (article_id, username, body) => {
+  return db
+    .query(
+      `INSERT INTO comments (article_id, author, body, created_at, votes) 
+      VALUES ($1,$2,$3,NOW(),0)
+    RETURNING *;`,
+      [article_id, username, body]
+    )
+    .then((result) => {
+      return result.rows[0];
+    })
+    .catch((err) => {
+      if (err.code === "23503") {
+        return Promise.reject({
+          status: 404,
+          msg: `article does not exist`,
+        });
+      }
     });
 };

@@ -10,6 +10,7 @@ const {
   articleData,
   commentData,
 } = require("../db/data/test-data/index.js");
+const Test = require("supertest/lib/test.js");
 /* Set up your test imports here */
 
 /* Set up your beforeEach & afterAll functions here */
@@ -134,9 +135,9 @@ describe("GET /api/articles/:article_id/comments", () => {
               created_at: expect.any(String),
               author: expect.any(String),
               body: expect.any(String),
-              article_id: expect.any(Number),
             })
           );
+          expect(comment.article_id).toEqual(1);
         });
 
         expect(comment).toBeSortedBy("created_at", { descending: true });
@@ -156,6 +157,66 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request!");
+      });
+  });
+});
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST: 201 Responds with the posted comment", () => {
+    const postedComment = {
+      username: "butter_bridge",
+      body: "this have been posted as a new comment",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(postedComment)
+      .expect(201)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual(
+          expect.objectContaining({
+            created_at: expect.any(Number),
+            article_id: 1,
+            author: "butter_bridge",
+            body: "this have been posted as a new comment",
+            created_at: expect.any(String),
+            votes: 0,
+          })
+        );
+      });
+  });
+  test("POST: 400 Send an error message when username or body is invalid", () => {
+    const invalidPost = { username: "butter_bridge" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(invalidPost)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid insertion");
+      });
+  });
+  test("POST: 400 sends an appropriate status and error message when given an invalid id", () => {
+    const invalidPost = {
+      username: "butter_bridge",
+      body: "this have been posted as a new comment",
+    };
+    return request(app)
+      .post("/api/articles/not_a_number/comments")
+      .send(invalidPost)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request!");
+      });
+  });
+  test("POST: 404 Send an error message when artice id is invalid", () => {
+    const invalidPost = {
+      username: "butter_bridge",
+      body: "this have been posted as a new comment",
+    };
+    return request(app)
+      .post("/api/articles/999/comments")
+      .send(invalidPost)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("article does not exist");
       });
   });
 });

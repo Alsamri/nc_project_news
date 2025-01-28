@@ -292,7 +292,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
-describe.only("GET /api/users", () => {
+describe("GET /api/users", () => {
   test("GET: 200 responds with all users in an array", () => {
     return request(app)
       .get("/api/users")

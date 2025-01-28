@@ -6,10 +6,21 @@ exports.alltopics = () => {
   });
 };
 
-exports.getArticles = (sort_by = "created_at", order = "DESC") => {
-  return db
-    .query(
-      `SELECT 
+exports.getArticles = (sort_by = "created_at", order = "DESC", topic) => {
+  const greenQuery = [
+    "created_at",
+    "author",
+    "title",
+    "topic",
+    "votes",
+    "comment_count",
+  ];
+
+  if (!greenQuery.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Invalid Query!" });
+  }
+  let Args = [];
+  let SQLstr = `SELECT 
           articles.article_id, 
           articles.title, 
           articles.author, 
@@ -20,13 +31,19 @@ exports.getArticles = (sort_by = "created_at", order = "DESC") => {
           COUNT(comments.comment_id) AS comment_count
        FROM articles 
        LEFT JOIN comments 
-       ON articles.article_id = comments.article_id
-       GROUP BY articles.article_id
-       ORDER BY ${sort_by} ${order};`
-    )
-    .then((article) => {
-      return article.rows;
-    });
+       ON articles.article_id = comments.article_id`;
+  if (topic) {
+    SQLstr += ` WHERE articles.topic = $1`;
+    Args.push(topic);
+  }
+  SQLstr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`;
+
+  return db.query(SQLstr, Args).then((article) => {
+    if (article.rowCount === 0) {
+      return Promise.reject({ status: 404, msg: "article does not exist" });
+    }
+    return article.rows;
+  });
 };
 exports.getarticlesid = (article_id) => {
   return db

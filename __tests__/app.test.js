@@ -89,7 +89,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles/", () => {
-  it("GET: 200 an articles array of article objects ", () => {
+  test("GET: 200 an articles array of article objects ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -113,6 +113,17 @@ describe("GET /api/articles/", () => {
           expect(response.body.result).toBeSortedBy("created_at", {
             descending: true,
           });
+        });
+      });
+  });
+  test("GET: 200  respond with article by topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((result) => {
+        expect(result.body.result).toBeInstanceOf(Array);
+        result.body.result.forEach((article) => {
+          expect(article.topic).toBe("cats");
         });
       });
   });

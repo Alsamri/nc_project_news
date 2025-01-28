@@ -8,6 +8,7 @@ const {
   gettingArticlesById,
   addNewComment,
   updateVotesById,
+  deleteCommentById,
 } = require("./model");
 
 exports.getAllDocs = (req, res, next) => {
@@ -77,6 +78,15 @@ exports.patchVotes = (req, res, next) => {
   updateVotesById(article_id, inc_votes)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+exports.deleteByid = (req, res, next) => {
+  const { comment_id } = req.params;
+  deleteCommentById(comment_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };

@@ -10,6 +10,7 @@ const {
   deleteCommentById,
   allUsers,
   selectUserByUsername,
+  incVotesbyCommentId,
 } = require("./model");
 
 exports.getAllDocs = (req, res, next) => {
@@ -84,7 +85,15 @@ exports.patchVotes = (req, res, next) => {
     })
     .catch(next);
 };
-
+exports.patchCommentVotes = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+  incVotesbyCommentId(comment_id, inc_votes)
+    .then((comment) => {
+      res.status(200).send({ comment });
+    })
+    .catch(next);
+};
 exports.deleteByid = (req, res, next) => {
   const { comment_id } = req.params;
   deleteCommentById(comment_id)

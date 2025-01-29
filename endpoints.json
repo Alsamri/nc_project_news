@@ -37,6 +37,33 @@
       ]
     }
   },
+  "POST /api/articles": {
+    "description": "post a new article to the database and returns the new article.",
+    "requestBody": {
+      "author": "string ",
+      "title": "string ",
+      "body": "string ",
+      "topic": "string (",
+      "article_img_url": "string (optional)"
+    },
+    "exampleRequest": {
+      "author": "butter_bridge",
+      "title": "testing post article",
+      "body": "body of the new article.",
+      "topic": "mitch"
+    },
+    "exampleResponse": {
+      "article_id": 14,
+      "author": "butter_bridge",
+      "title": "testing post article",
+      "body": "body of the new article.",
+      "topic": "mitch",
+      "article_img_url": "http://DefaultURL-IMG.jpg",
+      "votes": 0,
+      "created_at": "2025-01-29T16:20:19.640Z",
+      "comment_count": 0
+    }
+  },
   "GET /api/articles/1": {
     "description": "serves an array of article by their id",
     "queries": [],

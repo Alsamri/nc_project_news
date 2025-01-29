@@ -139,6 +139,91 @@ describe("GET /api/articles/", () => {
       });
   });
 });
+describe("POST /api/articles/", () => {
+  test("POST: 201  respond with the posted article ", () => {
+    const postedArticle = {
+      author: "butter_bridge",
+      title: "testing post article",
+      body: "body of the new article.",
+      topic: "mitch",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(postedArticle)
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article).toBeInstanceOf(Object);
+        expect(article).toHaveProperty("article_id");
+        expect(article).toHaveProperty("author", postedArticle.author);
+        expect(article).toHaveProperty("title", postedArticle.title);
+        expect(article).toHaveProperty("body", postedArticle.body);
+        expect(article).toHaveProperty("topic", postedArticle.topic);
+        expect(article).toHaveProperty("article_img_url");
+        expect(article).toHaveProperty("votes", 0);
+        expect(article).toHaveProperty("created_at");
+        expect(article).toHaveProperty("comment_count", 0);
+      });
+  });
+  test("POST: 400 Send an error message when post is missing required data ", () => {
+    const invalidArticle = {
+      author: "butter_bridge",
+      title: "testing post article",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(invalidArticle)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid insertion");
+      });
+  });
+  test("POST: 404 foreign key violation(topic)", () => {
+    const invalidArticle = {
+      author: "butter_bridge",
+      title: "Article",
+      body: "This post has a topic that does not exist.",
+      topic: "non_existent_topic",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(invalidArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("POST: 404 foreign key violation(author)", () => {
+    const invalidAuthorArticle = {
+      author: "non_existent_author",
+      title: "invalid author",
+      body: "author that does not exist.",
+      topic: "mitch",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(invalidAuthorArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("POST: 404 invalid data type", () => {
+    const invalidDataArticle = {
+      author: "butter_bridge",
+      title: "Article with invalid data",
+      body: "Testing data type validation",
+      topic: 111,
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(invalidDataArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+});
+
 describe("GET /api/articles/:article_id/comments", () => {
   test("GET: 200 responds with an array of comments for the given article id", () => {
     return request(app)

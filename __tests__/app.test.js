@@ -336,8 +336,6 @@ describe("GET /api/users", () => {
       .get("/api/users/rogersop")
       .expect(200)
       .then(({ body: { user } }) => {
-        console.log(user);
-
         expect(user).toBeInstanceOf(Object);
         expect(user).toEqual(
           expect.objectContaining({

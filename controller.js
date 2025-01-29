@@ -93,7 +93,7 @@ exports.deleteByid = (req, res, next) => {
     .catch(next);
 };
 
-exports.getallusers = (req, res, next) => {
+exports.selectAllUsers = (req, res, next) => {
   allUsers()
     .then((users) => {
       res.status(200).send({ users });

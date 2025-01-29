@@ -127,9 +127,17 @@ describe("GET /api/articles/", () => {
         });
       });
   });
+  test("GET: 400 - responds with an error for an invalid sort query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=invalidentery")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Query!");
+      });
+  });
 });
 describe("GET /api/articles/:article_id/comments", () => {
-  test("GET: 200 Responds with an array of comments for the given article id", () => {
+  test("GET: 200 responds with an array of comments for the given article id", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)

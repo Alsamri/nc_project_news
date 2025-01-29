@@ -314,6 +314,58 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+describe("PATCH /api/comments/:comment_id", () => {
+  test("PATCH : 200 Updates the comments votes and send back the comment", () => {
+    const newVote = { inc_votes: 5 };
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVote)
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: 1,
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            article_id: 9,
+            author: "butter_bridge",
+            votes: 21,
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+  test("PATCH : 400 sends an appropriate status and error message when given an invalid id", () => {
+    const newVote = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/comments/not_a_number")
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request!");
+      });
+  });
+  test("PATCH : 400 Responds with an error when inc votes is not a number ", () => {
+    const newVote = { inc_votes: "not_a_number" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request!");
+      });
+  });
+  test("PATCH : 404 Responds with an error when comment ID does not exist ", () => {
+    const newVote = { inc_votes: 15 };
+    return request(app)
+      .patch("/api/comments/800")
+      .send(newVote)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment does not exist");
+      });
+  });
+});
 describe("GET /api/users", () => {
   test("GET: 200 responds with all users in an array", () => {
     return request(app)

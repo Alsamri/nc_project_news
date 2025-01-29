@@ -143,5 +143,16 @@
         }
       ]
     }
+  },
+  "GET /api/users/:username": {
+    "description": "Returns a user object by username",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "rogersop",
+        "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+        "name": "paul"
+      }
+    }
   }
 }

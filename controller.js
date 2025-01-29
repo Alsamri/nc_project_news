@@ -9,6 +9,7 @@ const {
   updateVotesById,
   deleteCommentById,
   allUsers,
+  selectUserByUsername,
 } = require("./model");
 
 exports.getAllDocs = (req, res, next) => {
@@ -97,6 +98,14 @@ exports.selectAllUsers = (req, res, next) => {
   allUsers()
     .then((users) => {
       res.status(200).send({ users });
+    })
+    .catch(next);
+};
+exports.getUserbyUsername = (req, res, next) => {
+  const { username } = req.params;
+  selectUserByUsername(username)
+    .then((user) => {
+      res.status(200).send({ user });
     })
     .catch(next);
 };

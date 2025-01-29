@@ -331,4 +331,28 @@ describe("GET /api/users", () => {
         });
       });
   });
+  test("GET: 200 responds with the right user by username", () => {
+    return request(app)
+      .get("/api/users/rogersop")
+      .expect(200)
+      .then(({ body: { user } }) => {
+        expect(user).toBeInstanceOf(Object);
+        expect(user).toEqual(
+          expect.objectContaining({
+            username: "rogersop",
+            name: "paul",
+            avatar_url:
+              "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+          })
+        );
+      });
+  });
+  test("GET: 404 responds with an error when username does not exist", () => {
+    return request(app)
+      .get("/api/users/invalidUsername")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User does not exist");
+      });
+  });
 });

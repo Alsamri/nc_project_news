@@ -108,6 +108,35 @@ exports.addNewComment = (article_id, username, body) => {
       }
     });
 };
+exports.addNewArticle = (
+  author,
+  title,
+  body,
+  topic,
+  article_img_url = "http://DefaultURL-IMG.jpg"
+) => {
+  return db
+    .query(
+      `INSERT INTO articles (author, title, body, topic, article_img_url, votes, created_at)
+      VALUES ($1, $2, $3, $4, $5, 0, NOW())
+      RETURNING article_id, author, title, body, topic, article_img_url, votes, created_at;`,
+      [author, title, body, topic, article_img_url]
+    )
+    .then((result) => {
+      const insertedArticle = result.rows[0];
+      insertedArticle.comment_count = 0;
+
+      return insertedArticle;
+    })
+    .catch((err) => {
+      if (err.code === "23503") {
+        return Promise.reject({
+          status: 404,
+          msg: `article does not exist`,
+        });
+      }
+    });
+};
 exports.updateVotesById = (article_id, inc_votes) => {
   return db
     .query(

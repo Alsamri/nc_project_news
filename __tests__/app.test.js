@@ -68,6 +68,8 @@ describe("GET /api/articles/:article_id", () => {
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         );
         expect(response.body.article.article_id).toBe(1);
+        expect(response.body.article).toHaveProperty("comment_count");
+        expect(typeof response.body.article.comment_count).toBe("string");
       });
   });
   test("GET:404 sends an appropriate status and error message when given a valid but non-existent id", () => {
@@ -96,6 +98,7 @@ describe("GET /api/articles/", () => {
       .then((response) => {
         expect(response.body.result).toBeInstanceOf(Array);
         expect(response.body.result.length).toBeGreaterThan(1);
+
         response.body.result.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -318,7 +321,7 @@ describe("GET /api/users", () => {
       .expect(200)
       .then(({ body: { users } }) => {
         expect(users).toBeInstanceOf(Array);
-        expect(users.length).toBeGreaterThan(0);
+        expect(users.length).toBe(4);
         users.forEach((user) => {
           expect.objectContaining({
             username: expect.any(String),

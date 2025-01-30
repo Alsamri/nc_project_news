@@ -453,6 +453,27 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+describe("DELETE /api/articles/:article_id", () => {
+  test("DELETE: 204 deletes the article with no response", () => {
+    return request(app).delete("/api/articles/3").expect(204);
+  });
+  test("DELETE: 400 responds with an error for invalid id ", () => {
+    return request(app)
+      .delete("/api/articles/not_a_number")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request!");
+      });
+  });
+  test("DELETE: 404 responds with an error if article id does not exist", () => {
+    return request(app)
+      .delete("/api/articles/999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article does not exist");
+      });
+  });
+});
 describe("PATCH /api/comments/:comment_id", () => {
   test("PATCH : 200 Updates the comments votes and send back the comment", () => {
     const newVote = { inc_votes: 5 };

@@ -13,6 +13,7 @@ const {
   incVotesbyCommentId,
   addNewArticle,
   addNewTopic,
+  deleteArticles,
 } = require("./model");
 const { log } = require("console");
 
@@ -130,6 +131,14 @@ exports.deleteByid = (req, res, next) => {
     .catch(next);
 };
 
+exports.deleteArticlesById = (req, res, next) => {
+  const { article_id } = req.params;
+  deleteArticles(article_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
+};
 exports.selectAllUsers = (req, res, next) => {
   allUsers()
     .then((users) => {

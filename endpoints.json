@@ -160,6 +160,12 @@
     "exampleRequest": "/api/comments/1",
     "exampleResponse": null
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "Deletes the article and its respective comments with the specified article id",
+    "queries": [],
+    "exampleRequest": "/api/articles/3",
+    "exampleResponse": null
+  },
   "PATCH /api/comments/:comment_id": {
     "description": "Updates the comments votes and send back the comment",
     "queries": [],

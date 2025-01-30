@@ -10,7 +10,6 @@ const {
   articleData,
   commentData,
 } = require("../db/data/test-data/index.js");
-const Test = require("supertest/lib/test.js");
 
 beforeEach(() => {
   return seed({ topicData, userData, articleData, commentData });
@@ -42,6 +41,61 @@ describe("GET /api/topics", () => {
           expect(typeof topic.slug).toBe("string");
           expect(typeof topic.description).toBe("string");
         });
+      });
+  });
+});
+describe("POST /api/topics", () => {
+  test("POST: 201  respond with the posted topic ", () => {
+    const postedTopic = {
+      slug: "Movies",
+      description: "all about movies",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(postedTopic)
+      .expect(201)
+      .then(({ body: { topic } }) => {
+        expect(topic).toBeInstanceOf(Object);
+        expect(topic).toHaveProperty("slug", postedTopic.slug);
+        expect(topic).toHaveProperty("description", postedTopic.description);
+      });
+  });
+  test("POST: 400 Send an error message when post is missing required data ", () => {
+    const invalidtopic = {
+      slug: "games",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(invalidtopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid insertion");
+      });
+  });
+  test("POST: 400 invalid data type", () => {
+    const postedTopic = {
+      slug: 5123,
+      description: "string",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(postedTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request!");
+      });
+  });
+  test("POST: 409 duplicate topic", () => {
+    const sameTopic = {
+      slug: "mitch",
+      description: "Should fail",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(sameTopic)
+      .expect(409)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic already exists");
       });
   });
 });

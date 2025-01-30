@@ -12,7 +12,9 @@ const {
   selectUserByUsername,
   incVotesbyCommentId,
   addNewArticle,
+  addNewTopic,
 } = require("./model");
+const { log } = require("console");
 
 exports.getAllDocs = (req, res, next) => {
   const theFilePath = path.join(__dirname, "./endpoints.json");
@@ -72,6 +74,20 @@ exports.postnewcomment = (req, res, next) => {
   addNewComment(article_id, username, body)
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.postNewTopic = (req, res, next) => {
+  const { slug, description } = req.body;
+  if (!slug || !description) {
+    return res.status(400).send({ msg: "Invalid insertion" });
+  } else if (typeof slug != "string" || typeof description != "string") {
+    return res.status(400).send({ msg: "Bad Request!" });
+  }
+  addNewTopic(slug, description)
+    .then((topic) => {
+      res.status(201).send({ topic });
     })
     .catch(next);
 };

@@ -64,6 +64,23 @@
       "comment_count": 0
     }
   },
+  "POST /api/topics": {
+    "description": "post a new topic to the data and returns the topic posted.",
+    "requestBody": {
+      "slug": "string",
+      "description": "string"
+    },
+    "exampleRequest": {
+      "slug": "Movies",
+      "description": "all about movies"
+    },
+    "exampleResponse": {
+      "topic": {
+        "slug": "Movies",
+        "description": "all about movies"
+      }
+    }
+  },
   "GET /api/articles/1": {
     "description": "serves an array of article by their id",
     "queries": [],

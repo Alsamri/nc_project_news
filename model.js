@@ -108,6 +108,26 @@ exports.addNewComment = (article_id, username, body) => {
       }
     });
 };
+exports.addNewTopic = (slug, description) => {
+  return db
+    .query(
+      `INSERT INTO topics (slug, description)
+  VALUES ($1,$2) RETURNING *;`,
+      [slug, description]
+    )
+    .then((result) => {
+      return result.rows[0];
+    })
+    .catch((err) => {
+      if (err.code === "23505") {
+        return Promise.reject({
+          status: 409,
+          msg: "Topic already exists",
+        });
+      }
+      return Promise.reject(err);
+    });
+};
 exports.addNewArticle = (
   author,
   title,

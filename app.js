@@ -11,6 +11,8 @@ app.use((err, req, res, next) => {
     res.status(err.status).send({ msg: err.msg });
   } else if (err.code === "22P02" || "23502") {
     res.status(400).send({ msg: "Bad Request!" });
+  } else if (err.code === "23505") {
+    res.status(409).send({ msg: "Topic already exists" });
   } else if (err.code === "23503") {
     res.status(404).send({ msg: "article does not exist" });
   } else {

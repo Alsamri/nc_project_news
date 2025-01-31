@@ -15,7 +15,6 @@ const {
   addNewTopic,
   deleteArticles,
 } = require("./model");
-const { log } = require("console");
 
 exports.getAllDocs = (req, res, next) => {
   const theFilePath = path.join(__dirname, "./endpoints.json");

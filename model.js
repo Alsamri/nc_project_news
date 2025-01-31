@@ -19,6 +19,7 @@ exports.getArticles = (sort_by = "created_at", order = "DESC", topic) => {
   if (!greenQuery.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "Invalid Query!" });
   }
+  let pagintation = ``;
   let Args = [];
   let SQLstr = `SELECT 
           articles.article_id, 
@@ -29,14 +30,15 @@ exports.getArticles = (sort_by = "created_at", order = "DESC", topic) => {
           articles.created_at, 
           articles.topic,
           COUNT(comments.comment_id) AS comment_count
-       FROM articles 
+       FROM articles
        LEFT JOIN comments 
        ON articles.article_id = comments.article_id`;
   if (topic) {
     SQLstr += ` WHERE articles.topic = $1`;
     Args.push(topic);
   }
-  SQLstr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`;
+
+  SQLstr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
 
   return db.query(SQLstr, Args).then((article) => {
     if (article.rowCount === 0) {

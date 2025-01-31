@@ -36,6 +36,8 @@ describe("GET /api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then(({ body: { topics } }) => {
+        console.log(topics);
+
         expect(topics).toEqual(topicData);
         topics.forEach((topic) => {
           expect(typeof topic.slug).toBe("string");

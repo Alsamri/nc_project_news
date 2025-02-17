@@ -6,7 +6,12 @@ exports.alltopics = () => {
   });
 };
 
-exports.getArticles = (sort_by = "created_at", order = "DESC", topic) => {
+exports.getArticles = (query) => {
+  const page = query.page || 1;
+  const sort_by = query.sort_by || "created_at";
+  const order = query.order || "DESC";
+  const limit = query.limit || 10;
+  const topic = query.topic;
   const greenQuery = [
     "created_at",
     "author",
@@ -19,7 +24,6 @@ exports.getArticles = (sort_by = "created_at", order = "DESC", topic) => {
   if (!greenQuery.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "Invalid Query!" });
   }
-  let pagintation = ``;
   let Args = [];
   let SQLstr = `SELECT 
           articles.article_id, 
@@ -39,6 +43,10 @@ exports.getArticles = (sort_by = "created_at", order = "DESC", topic) => {
   }
 
   SQLstr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+  if (page) {
+    SQLstr += ` LIMIT ${limit} `;
+    SQLstr += ` OFFSET ${limit * (page - 1)}`;
+  }
 
   return db.query(SQLstr, Args).then((article) => {
     if (article.rowCount === 0) {

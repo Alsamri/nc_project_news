@@ -36,8 +36,8 @@ exports.gettopics = (req, res, next) => {
   });
 };
 exports.getAllArticles = (req, res, next) => {
-  const { sort_by, order, topic } = req.query;
-  getArticles(sort_by, order, topic)
+  const { sort_by, order, topic, limit, page } = req.query;
+  getArticles(req.query)
     .then((result) => {
       res.status(200).send({ result });
     })

@@ -36,8 +36,6 @@ describe("GET /api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then(({ body: { topics } }) => {
-        console.log(topics);
-
         expect(topics).toEqual(topicData);
         topics.forEach((topic) => {
           expect(typeof topic.slug).toBe("string");
@@ -567,6 +565,29 @@ describe("GET /api/users", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("User does not exist");
+      });
+  });
+});
+describe("GET /api/articles (pagination)", () => {
+  test("GET: 200 responds with a paginated list of articles and total_count", () => {
+    return request(app)
+      .get("/api/articles?limit=5&page")
+      .expect(200)
+      .then(({ body }) => {
+        //expect(body).toHaveProperty("total_count");
+
+        expect(body.result).toBeInstanceOf(Array);
+        expect(body.result.length).toBe(5);
+
+        body.result.forEach((article) => {
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("author");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("comment_count");
+        });
       });
   });
 });

@@ -1,8 +1,4 @@
-# Northcoders News API
-
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
-
-[urlhere]
+[Github Link](https://github.com/Alsamri/nc_project_news)
 
 Project Overview:
 NC News is a backend API that serves data on articles, users, topics, and comments. It allows users to view articles, filter by topic, submit comments, and vote on articles.

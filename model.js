@@ -47,10 +47,7 @@ exports.getArticles = (query) => {
   }
 
   SQLstr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
-  if (page) {
-    SQLstr += ` LIMIT ${limit} `;
-    SQLstr += ` OFFSET ${limit * (page - 1)}`;
-  }
+  SQLstr += ` LIMIT ${limit} OFFSET ${(page - 1) * limit}`;
 
   return Promise.all([db.query(SQLstr, Args), db.query(countSQL, Args)]).then(
     ([articleResult, countResult]) => {

@@ -39,7 +39,10 @@ exports.getAllArticles = (req, res, next) => {
   const { sort_by, order, topic, limit, page } = req.query;
   getArticles(req.query)
     .then((result) => {
-      res.status(200).send({ result });
+      res.status(200).send({
+        result: result.result,
+        total_count: result.total_count,
+      });
     })
     .catch(next);
 };

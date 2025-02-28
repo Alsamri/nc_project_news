@@ -574,8 +574,6 @@ describe("GET /api/articles (pagination)", () => {
       .get("/api/articles?limit=5&page")
       .expect(200)
       .then(({ body }) => {
-        //expect(body).toHaveProperty("total_count");
-
         expect(body.result).toBeInstanceOf(Array);
         expect(body.result.length).toBe(5);
 

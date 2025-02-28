@@ -37,8 +37,12 @@ exports.getArticles = (query) => {
        FROM articles
        LEFT JOIN comments 
        ON articles.article_id = comments.article_id`;
+
+  let countSQL = `SELECT COUNT(*)::int AS total_count FROM articles`;
+
   if (topic) {
     SQLstr += ` WHERE articles.topic = $1`;
+    countSQL += ` WHERE articles.topic = $1`;
     Args.push(topic);
   }
 
@@ -48,12 +52,17 @@ exports.getArticles = (query) => {
     SQLstr += ` OFFSET ${limit * (page - 1)}`;
   }
 
-  return db.query(SQLstr, Args).then((article) => {
-    if (article.rowCount === 0) {
-      return Promise.reject({ status: 404, msg: "article does not exist" });
+  return Promise.all([db.query(SQLstr, Args), db.query(countSQL, Args)]).then(
+    ([articleResult, countResult]) => {
+      if (articleResult.rowCount === 0) {
+        return Promise.reject({ status: 404, msg: "No articles found" });
+      }
+      return {
+        result: articleResult.rows,
+        total_count: countResult.rows[0].total_count,
+      };
     }
-    return article.rows;
-  });
+  );
 };
 exports.getarticlesid = (article_id) => {
   return db

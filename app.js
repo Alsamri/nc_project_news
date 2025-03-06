@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const router = require("./routers/api.routers");
 const cors = require("cors");
-app.use(cors({ origin: "https://aloisa.netlify.app" }));
+app.use(cors());
 
 app.use(express.json());
 

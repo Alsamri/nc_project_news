@@ -576,7 +576,6 @@ describe("GET /api/articles (pagination)", () => {
       .then(({ body }) => {
         expect(body.result).toBeInstanceOf(Array);
         expect(body.result.length).toBe(5);
-
         body.result.forEach((article) => {
           expect(article).toHaveProperty("article_id");
           expect(article).toHaveProperty("author");

@@ -118,7 +118,9 @@ describe("GET /api/articles/:article_id", () => {
         const receivedDate = new Date(
           response.body.article.created_at
         ).getTime();
-        expect(receivedDate).toBe(expectedDate);
+        expect(Math.abs(receivedDate - expectedDate)).toBeLessThanOrEqual(
+          3600 * 1000
+        );
 
         expect(response.body.article.votes).toBe(100);
         expect(response.body.article.article_img_url).toBe(

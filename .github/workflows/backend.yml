@@ -23,17 +23,47 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - run: npm ci
-      - run: npm run setup-dbs
-      - run: npm test
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..10}; do
+            pg_isready -U postgres -h localhost -p 5432 -d nc_news_test && break
+            sleep 2
+          done
+
+      - name: Debug PostgreSQL connection
+        run: |
+          echo "PGHOST: $PGHOST"
+          echo "PGPORT: $PGPORT"
+          echo "PGUSER: $PGUSER"
+          echo "PGDATABASE: $PGDATABASE"
+          pg_isready -U postgres -h localhost -p 5432 -d nc_news_test
+
+      - name: Setup databases
+        run: npm run setup-dbs
         env:
           PGDATABASE: nc_news_test
           PGUSER: postgres
           PGPASSWORD: postgres
+          PGHOST: localhost
+          PGPORT: 5432
+
+      - name: Run tests
+        run: npm test
+        env:
+          PGDATABASE: nc_news_test
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGHOST: localhost
+          PGPORT: 5432
 
   deploy:
     needs: test

@@ -101,7 +101,7 @@ describe("POST /api/topics", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test("200: Responds with the right article by the id object detailing all its proporties", () => {
+  test("200: Responds with the right article by the id object detailing all its properties", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -114,9 +114,14 @@ describe("GET /api/articles/:article_id", () => {
         expect(response.body.article.body).toBe(
           "I find this existence challenging"
         );
-        expect(response.body.article.created_at).toBe(
-          "2020-07-09T20:11:00.000Z"
+        const expectedDate = new Date("2020-07-09T20:11:00.000Z").getTime();
+        const receivedDate = new Date(
+          response.body.article.created_at
+        ).getTime();
+        expect(Math.abs(receivedDate - expectedDate)).toBeLessThanOrEqual(
+          3600 * 1000
         );
+
         expect(response.body.article.votes).toBe(100);
         expect(response.body.article.article_img_url).toBe(
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"

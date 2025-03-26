@@ -2,8 +2,14 @@ const express = require("express");
 const app = express();
 const router = require("./routers/api.routers");
 const cors = require("cors");
-app.use(cors());
 
+app.use(
+  cors({
+    origin: "https://aloisa.netlify.app",
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 
 app.use("/api", router);

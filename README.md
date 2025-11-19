@@ -2,7 +2,7 @@
 
 A RESTful API for a social news aggregation and discussion platform, similar to Reddit. Built with Node.js, Express, and PostgreSQL.
 
-[Live API](https://your-hosted-url.com/api) | [GitHub Repository](https://github.com/Alsamri/nc_project_news)
+[Live API](https://nc-project-news.onrender.com/api) | [GitHub Repository](https://github.com/Alsamri/nc_project_news)
 
 ## Features
 

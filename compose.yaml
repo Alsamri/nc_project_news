@@ -1,0 +1,30 @@
+services:
+  server:
+    build: .
+    ports:
+      - 9000:9000
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env.docker
+
+  db:
+    image: postgres:15-alpine
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nc_news
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db:/docker-db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
